@@ -77,7 +77,7 @@ class Game:
         self.energy = Energy(self.all_sprites)
         self.meteors = pygame.sprite.Group()
         self.lasers = pygame.sprite.Group()
-        self.player = Player(self.all_sprites, self.lasers, self.energy)
+        self.player = Player(self.all_sprites, self.lasers, self.health, self.energy)
         self.score = Scoreboard(self.all_sprites)
 
         # Time tracking and spawn settings
@@ -133,7 +133,7 @@ class Game:
         for meteor in player_collisions:
             PlayerExplosion(self.player.rect.center, self.all_sprites)
             self.collision_sound.play()
-            self.health.reduce_health()
+            self.health.reduce(10)
 
         for laser in self.lasers:
             laser_collision = pygame.sprite.spritecollide(laser, self.meteors, True, pygame.sprite.collide_mask)
@@ -207,10 +207,11 @@ class Game:
         self.stars.empty()
         self.meteors.empty()
         self.lasers.empty()
-        self.player = Player(self.all_sprites, self.lasers, self.energy)
         self.health = Health(self.all_sprites)
         self.energy = Energy(self.all_sprites)
+        self.player = Player(self.all_sprites, self.lasers, self.health, self.energy)  # Ensure all parameters are passed
         self.score = Scoreboard(self.all_sprites)
+
 
     def display_high_scores(self):
         """
@@ -276,7 +277,7 @@ class Game:
                 self.display_surface.blit(self.image, (0, 0))
                 self.all_sprites.draw(self.display_surface)
                 self.all_sprites.update(dt)
-                self.health.increase_health()
+                self.health.increase(5)
                 self.spawn_stars()
                 self.collisions()
                 self.spawn_meteors()

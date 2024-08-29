@@ -13,7 +13,19 @@
     },
     {
         "name": "fdsfds",
+        "score": 7
+    },
+    {
+        "name": "fdsfds",
         "score": 4
+    },
+    {
+        "name": "fdsfsd",
+        "score": 4
+    },
+    {
+        "name": "fdfds",
+        "score": 3
     },
     {
         "name": "It works",
@@ -26,17 +38,5 @@
     {
         "name": " csfdfs",
         "score": 2
-    },
-    {
-        "name": "test 1\r",
-        "score": 1
-    },
-    {
-        "name": "dsadas",
-        "score": 1
-    },
-    {
-        "name": "dfds",
-        "score": 0
     }
 ]

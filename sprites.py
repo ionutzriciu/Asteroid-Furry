@@ -1,30 +1,15 @@
-"""
-This module contains the classes for the game's main elements, including players, meteors, and lasers.
-All sprite-related functionality is defined and managed here.
-"""
-
-import pygame.sprite
+import pygame
 from settings import *
 from support import *
-from bar_health_energy import * 
-
-
-import pygame
+from bar_health_energy import Health, Energy
 
 class Player(pygame.sprite.Sprite):
-    """
-    Represents the player's spaceship in the game.
-
-    Attributes:
-        sprite_groups: Groups to which the player sprite belongs.
-        lasers_group: Group to manage the player's laser sprites.
-        energy: Player's energy bar.
-    """
-    def __init__(self, sprite_groups, lasers_group, energy):
+    def __init__(self, sprite_groups, lasers_group, health, energy):
         super().__init__(sprite_groups)
         self.groups = sprite_groups
         self.lasers = lasers_group
-        self.energy = energy
+        self.health = health  # Health bar instance
+        self.energy = energy  # Energy bar instance
         self.center_frame = pygame.image.load(join('data', 'images', 'space_ship', 'red', 'center.png'))
         self.left_frames = folder_importer('data', 'images', 'space_ship', 'red', 'Left')
         self.right_frames = folder_importer('data', 'images', 'space_ship', 'red', 'Right')
@@ -53,7 +38,7 @@ class Player(pygame.sprite.Sprite):
 
     def update(self, dt):
         """
-        Updates the player's position, animation, and shooting mechanism.
+        Updates the player's position, animation, health, energy, and shooting mechanism.
 
         Args:
             dt: Delta Time
@@ -86,25 +71,37 @@ class Player(pygame.sprite.Sprite):
         self.rect.centery = max(self.rect.height / 2, min(WINDOW_HEIGHT - self.rect.height / 2, self.rect.centery))
 
         if keys[pygame.K_SPACE] and self.can_shoot:
-            if self.energy.width == 0:  # Changed from energy_width to width
+            if self.energy.width == 0:
                 self.can_shoot = False
             else:
                 self.shoot()
                 self.special_move()
 
-        self.energy.increase_energy()
+        self.energy.increase(1)  # Passing the amount to increase energy by
         self.laser_timer()
 
-    def reduce_energy(self):
+    def reduce_health(self, amount):
+        """Reduces the player's health."""
+        self.health.reduce(amount)  # Passing the amount to reduce health by
+
+    def increase_health(self, amount):
+        """Increases the player's health."""
+        self.health.increase(amount)  # Passing the amount to increase health by
+
+    def reduce_energy(self, amount):
         """Reduces the player's energy."""
-        self.energy.reduce_energy()
+        self.energy.reduce(amount)  # Passing the amount to reduce energy by
+
+    def increase_energy(self, amount):
+        """Increases the player's energy."""
+        self.energy.increase(amount)  # Passing the amount to increase energy by
 
     def special_move(self):
         """
         Executes a special move by reducing energy and adjusting the laser cooldown duration.
         """
-        self.reduce_energy()
-        if self.energy.width > 50:  # Changed from energy_width to width
+        self.reduce_energy(10)  # Reduces energy by a specific amount
+        if self.energy.width > 50:
             self.cooldown_duration = 0
         else:
             self.cooldown_duration = 400
@@ -118,6 +115,21 @@ class Player(pygame.sprite.Sprite):
         self.laser_sound.play()
         self.can_shoot = False
         self.laser_shoot_time = pygame.time.get_ticks()
+
+    def take_damage(self, amount):
+        """
+        Reduces the player's health and handles death if health reaches zero.
+        """
+        self.reduce_health(amount)
+        if self.health.width <= 0:
+            self.die()
+
+    def die(self):
+        """
+        Handles the player's death, e.g., by playing an explosion animation and ending the game.
+        """
+        explosion = PlayerExplosion(self.rect.center, self.groups)
+        self.kill()  # Remove player from all groups, effectively "killing" the player
 
 
 class Laser(pygame.sprite.Sprite):
@@ -217,12 +229,12 @@ class AnimatedExplosion(pygame.sprite.Sprite):
     """
     def __init__(self, pos, groups):
         super().__init__(groups)
-        original_frames = png_image_cutter(join('data', 'images', 'explosions', '3.png'), 190, 190)
-        self.frames = [image_transformer(frame, 100, 100) for frame in original_frames]
-        self.frame_index = 0
-        self.image = self.frames[self.frame_index]
+        original_frames = png_image_cutter(join('data', 'images', 'explosions', '1.png'), 196, 190)
+        self.frames = [image_transformer(frame, 150, 150) for frame in original_frames]
+        self.image = self.frames[0]
         self.rect = self.image.get_rect(center=pos)
-        self.animation_speed = 0.5
+        self.frame_index = 0
+        self.animation_speed = 0.5  # Adjust this to control the speed of the animation
 
     def update(self, dt):
         """
@@ -251,6 +263,7 @@ class PlayerExplosion(AnimatedExplosion):
         super().__init__(pos, groups)
         original_frames = png_image_cutter(join('data', 'images', 'explosions', '1.png'), 196, 190)
         self.frames = [image_transformer(frame, 150, 150) for frame in original_frames]
+
 
 class Stars(pygame.sprite.Sprite):
     """
