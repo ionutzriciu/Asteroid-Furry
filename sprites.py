@@ -204,13 +204,6 @@ class Meteor(pygame.sprite.Sprite):
 
 
 class AnimatedExplosion(pygame.sprite.Sprite):
-    """
-    Represents an animated explosion.
-
-    Attributes:
-        pos: Position where the explosion occurs.
-        groups: Groups to which the explosion sprite belongs.
-    """
     def __init__(self, pos, groups):
         super().__init__(groups)
         original_frames = png_image_cutter(join('data', 'images', 'explosions', '1.png'), 196, 190)
@@ -221,12 +214,6 @@ class AnimatedExplosion(pygame.sprite.Sprite):
         self.animation_speed = 0.5  # Adjust this to control the speed of the animation
 
     def update(self, dt):
-        """
-        Updates the animation of the explosion and destroys it when the animation is complete.
-
-        Args:
-            dt: Delta time
-        """
         self.frame_index += self.animation_speed
         if self.frame_index >= len(self.frames):
             self.kill()
@@ -236,13 +223,6 @@ class AnimatedExplosion(pygame.sprite.Sprite):
 
 
 class PlayerExplosion(AnimatedExplosion):
-    """
-    Represents an animated explosion for the player.
-
-    Attributes:
-        pos: Position where the explosion occurs.
-        groups: Groups to which the explosion sprite belongs.
-    """
     def __init__(self, pos, groups):
         super().__init__(pos, groups)
         original_frames = png_image_cutter(join('data', 'images', 'explosions', '1.png'), 196, 190)

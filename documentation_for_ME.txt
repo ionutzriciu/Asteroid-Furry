@@ -4,7 +4,7 @@
 
 Version 1: Concrete Implementation
 
-python
+
 
 import pygame
 
@@ -73,7 +73,6 @@ Version 2: Abstract Base Class
 
 python
 
-import pygame
 from abc import ABC, abstractmethod
 
 class Bar(pygame.sprite.Sprite, ABC):
@@ -148,8 +147,10 @@ class Energy(Bar):
 Comparison
 
     Use of Abstract Base Class (ABC):
-        Version 1: Does not use abstract base classes, meaning that Bar class is not enforcing that its subclasses (Health and Energy) implement the increase and reduce methods.
-        Version 2: Uses ABC and abstractmethod to ensure that any subclass of Bar must implement increase and reduce methods. This makes Bar an abstract class, enforcing a contract on subclasses to provide concrete implementations for these methods.
+        Version 1: Does not use abstract base classes, meaning that Bar class is not enforcing that its subclasses (Health and Energy)
+        implement the increase and reduce methods.
+        Version 2: Uses ABC and abstractmethod to ensure that any subclass of Bar must implement increase and reduce methods. This makes Bar an abstract class, 
+        enforcing a contract on subclasses to provide concrete implementations for these methods.
 
     Flexibility and Extensibility:
         Version 1: All logic for increase and reduce is defined in the Bar class. This approach is simpler but less flexible. If you want different behavior for subclasses, you would need to override or modify the methods in the Bar class directly.
@@ -161,13 +162,16 @@ Comparison
 
     Efficiency:
         Version 1: Slightly more efficient if no additional subclass-specific behavior is required.
-        Version 2: Might introduce slight overhead due to the use of abstract base classes, but this is usually negligible compared to the benefits of a well-defined class hierarchy.
+        Version 2: Might introduce slight overhead due to the use of abstract base classes, but this is usually negligible 
+        compared to the benefits of a well-defined class hierarchy.
 
 Conclusion
 
-Version 2 is generally preferable for larger or more complex projects where clear contracts for subclasses are beneficial. It helps ensure that subclasses correctly implement necessary methods and provides a more structured approach to extending the Bar class.
+Version 2 is generally preferable for larger or more complex projects where clear contracts for subclasses are beneficial. 
+It helps ensure that subclasses correctly implement necessary methods and provides a more structured approach to extending the Bar class.
 
-Version 1 might be sufficient for simpler cases where the extra abstraction provided by ABC is not necessary. It can be easier to understand at a glance but might lack the flexibility for future changes.
+Version 1 might be sufficient for simpler cases where the extra abstraction provided by ABC is not necessary. It can be easier to 
+understand at a glance but might lack the flexibility for future changes.
 
 
 Version 2 (Abstract Base Class)
