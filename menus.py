@@ -4,7 +4,7 @@ from settings import *
 
 class Menu:
     """
-    Represents the game's main menu.
+    Represents the game's main menu. 
 
     Attributes:
         screen: The game screen where the menu is displayed.
