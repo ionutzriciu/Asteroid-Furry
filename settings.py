@@ -1,6 +1,6 @@
 
 """
-This module contains the configuration settings for the game.
+This module contains the configuration settings for the game. 
 All setup-related parameters and constants are defined and stored here.
 """
 import pygame
