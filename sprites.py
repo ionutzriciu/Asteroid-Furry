@@ -8,6 +8,8 @@ from settings import *
 from support import *
 
 
+import pygame
+
 class Player(pygame.sprite.Sprite):
     """
     Represents the player's spaceship in the game.
@@ -83,13 +85,13 @@ class Player(pygame.sprite.Sprite):
         self.rect.centery = max(self.rect.height / 2, min(WINDOW_HEIGHT - self.rect.height / 2, self.rect.centery))
 
         if keys[pygame.K_SPACE] and self.can_shoot:
-            if self.energy.energy_width == 0:
+            if self.energy.width == 0:  # Changed from energy_width to width
                 self.can_shoot = False
             else:
                 self.shoot()
                 self.special_move()
 
-        self.energy.increse_energy()
+        self.energy.increase_energy()
         self.laser_timer()
 
     def reduce_energy(self):
@@ -101,7 +103,7 @@ class Player(pygame.sprite.Sprite):
         Executes a special move by reducing energy and adjusting the laser cooldown duration.
         """
         self.reduce_energy()
-        if self.energy.energy_width > 50:
+        if self.energy.width > 50:  # Changed from energy_width to width
             self.cooldown_duration = 0
         else:
             self.cooldown_duration = 400
@@ -250,104 +252,95 @@ class PlayerExplosion(AnimatedExplosion):
         self.frames = [image_transformer(frame, 150, 150) for frame in original_frames]
 
 
-class Health(pygame.sprite.Sprite):
+class Bar(pygame.sprite.Sprite):
     """
-    Represents the health bar for the player.
-
+    Base class for any bar (Health, Energy) with common functionality.
+    
     Attributes:
-        groups: Groups to which the health bar sprite belongs.
+        initial_width: The initial width of the bar.
+        width: The current width of the bar.
+        height: The height of the bar.
+        color: The color of the bar.
+        cooldown_duration: The cooldown duration for regeneration.
     """
-    def __init__(self, groups):
+    def __init__(self, groups, initial_width, height, color, cooldown_duration, position):
         super().__init__(groups)
 
-        # Health attributes
-        self.initial_width = 300
-        self.width = self.initial_width
-        self.height = 10
+        self.initial_width = initial_width
+        self.width = initial_width
+        self.height = height
+        self.color = color
+        self.cooldown_duration = cooldown_duration
+        self.rect_center = position
+        
+        # Initialize the bar
         self.image = pygame.Surface((self.width, self.height))
-        self.image.fill((0, 255, 0))  # Green rectangle
-        self.rect = self.image.get_rect(center=(170, 650))
+        self.image.fill(self.color)
+        self.rect = self.image.get_rect(center=self.rect_center)
 
         # Timer mechanics
-        self.can_heal = True
-        self.last_heal_time = pygame.time.get_ticks()
-        self.cool_down_duration = 800
+        self.can_regenerate = True
+        self.last_update_time = pygame.time.get_ticks()
 
-    def increase_health(self):
+    def increase(self, amount):
         """
-        Increases the player's health over time based on a cooldown duration.
+        Increases the bar's width by a specified amount, up to its initial width.
         """
         current_time = pygame.time.get_ticks()
-        if self.can_heal and current_time >= self.last_heal_time + self.cool_down_duration:
+        if self.can_regenerate and current_time >= self.last_update_time + self.cooldown_duration:
             if self.width < self.initial_width:
-                self.width += 5
+                self.width += amount
                 if self.width > self.initial_width:
                     self.width = self.initial_width
-                self.last_heal_time = current_time
+                self.last_update_time = current_time
                 self.update_image()
 
-    def reduce_health(self):
-        """Reduces the player's health."""
-        self.width -= 10
+    def reduce(self, amount):
+        """
+        Reduces the bar's width by a specified amount, down to zero.
+        """
+        self.width -= amount
         if self.width < 0:
             self.width = 0
         self.update_image()
 
     def update_image(self):
-        """Updates the health bar's image and rect."""
+        """Updates the bar's image and rect."""
         self.image = pygame.Surface((self.width, self.height))
-        self.image.fill((0, 255, 0))
-        self.rect = self.image.get_rect(center=self.rect.center)
+        self.image.fill(self.color)
+        self.rect = self.image.get_rect(center=self.rect_center)
 
 
-class Energy(pygame.sprite.Sprite):
+class Health(Bar):
     """
-    Represents the energy bar for the player.
-
-    Attributes:
-        groups: Groups to which the energy bar sprite belongs.
+    Represents the health bar for the player.
     """
     def __init__(self, groups):
-        super().__init__(groups)
+        super().__init__(groups, initial_width=300, height=10, color=(0, 255, 0), cooldown_duration=800, position=(170, 650))
 
-        # Energy attributes
-        self.initial_width = 200
-        self.energy_width = self.initial_width
-        self.height = 10
-        self.image = pygame.Surface((self.energy_width, self.height))
-        self.image.fill((0, 128, 255))  # Blue rectangle
-        self.rect = self.image.get_rect(center=(170, 665))
+    def increase_health(self):
+        """Increases the player's health."""
+        self.increase(amount=5)
 
-        # Timer mechanics
-        self.can_regenerate_energy = True
-        self.last_regeneration = pygame.time.get_ticks()
-        self.cool_down_duration = 100
+    def reduce_health(self):
+        """Reduces the player's health."""
+        self.reduce(amount=10)
 
-    def increse_energy(self):
-        """
-        Increases the player's energy over time based on a cooldown duration.
-        """
-        current_time = pygame.time.get_ticks()
-        if self.can_regenerate_energy and current_time >= self.last_regeneration + self.cool_down_duration:
-            if self.energy_width < self.initial_width:
-                self.energy_width += 5
-                if self.energy_width > self.initial_width:
-                    self.energy_width = self.initial_width
-                self.last_regeneration = current_time
-                self.update_image()
+
+class Energy(Bar):
+    """
+    Represents the energy bar for the player.
+    """
+    def __init__(self, groups):
+        super().__init__(groups, initial_width=200, height=10, color=(0, 128, 255), cooldown_duration=100, position=(170, 665))
+
+    def increase_energy(self):
+        """Increases the player's energy."""
+        self.increase(amount=5)
 
     def reduce_energy(self):
         """Reduces the player's energy."""
-        self.energy_width -= 5
-        if self.energy_width < 0:
-            self.energy_width = 0
-        self.update_image()
-
-    def update_image(self):
-        """Updates the energy bar's image and rect."""
-        self.image = pygame.Surface((self.energy_width, self.height))
-        self.image.fill((0, 128, 255))
-        self.rect = self.image.get_rect(center=self.rect.center)
+        self.reduce(amount=5)
 
 
 class Stars(pygame.sprite.Sprite):
