@@ -22,6 +22,7 @@ from settings import *
 from sprites import *
 from menus import Menu
 from support import Scoreboard, HighScoresManager
+from bar_health_energy import * 
 
 # Initialize the mixer for sound effects
 pygame.mixer.init()
