@@ -81,25 +81,18 @@ class Player(pygame.sprite.Sprite):
         self.laser_timer()
 
     def reduce_health(self, amount):
-        """Reduces the player's health."""
         self.health.reduce(amount)  # Passing the amount to reduce health by
 
     def increase_health(self, amount):
-        """Increases the player's health."""
         self.health.increase(amount)  # Passing the amount to increase health by
 
     def reduce_energy(self, amount):
-        """Reduces the player's energy."""
         self.energy.reduce(amount)  # Passing the amount to reduce energy by
 
     def increase_energy(self, amount):
-        """Increases the player's energy."""
         self.energy.increase(amount)  # Passing the amount to increase energy by
 
     def special_move(self):
-        """
-        Executes a special move by reducing energy and adjusting the laser cooldown duration.
-        """
         self.reduce_energy(10)  # Reduces energy by a specific amount
         if self.energy.width > 50:
             self.cooldown_duration = 0
@@ -107,9 +100,6 @@ class Player(pygame.sprite.Sprite):
             self.cooldown_duration = 400
 
     def shoot(self):
-        """
-        Shoots a laser from the player's position.
-        """
         laser = Laser(self.groups, self)
         self.lasers.add(laser)
         self.laser_sound.play()
@@ -117,17 +107,11 @@ class Player(pygame.sprite.Sprite):
         self.laser_shoot_time = pygame.time.get_ticks()
 
     def take_damage(self, amount):
-        """
-        Reduces the player's health and handles death if health reaches zero.
-        """
         self.reduce_health(amount)
         if self.health.width <= 0:
             self.die()
 
     def die(self):
-        """
-        Handles the player's death, e.g., by playing an explosion animation and ending the game.
-        """
         explosion = PlayerExplosion(self.rect.center, self.groups)
         self.kill()  # Remove player from all groups, effectively "killing" the player
 
