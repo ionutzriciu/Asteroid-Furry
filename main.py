@@ -1,28 +1,13 @@
-"""
-Asteroid Fury - Main Game Module
-
-This module contains the main game loop and handles the overall game state management
-including the main menu, gameplay, game over, FAQ, and leaderboard states. The game
-is structured using classes and utilizes Pygame for rendering and handling game logic.
-
-Modules:
-- GameState: Enumeration for different game states.
-- Game: Main game class containing initialization, game loop, and state handling.
-
-Usage Example:
---------------
-To start the game, simply run this module:
-    python main.py
-"""
-
 import pygame
 import random
 from os.path import join
 from settings import *
-from sprites import *
+from player import *
 from menus import Menu
 from support import Scoreboard, HighScoresManager
 from bar_health_energy import * 
+from meteors_stars import Meteor, Stars
+from laser import Laser
 
 # Initialize the mixer for sound effects
 pygame.mixer.init()
