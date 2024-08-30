@@ -1,9 +1,7 @@
 import pygame
-from settings import *
-from support import *
-from bar_health_energy import Health, Energy
-from explosions import *
-#from meteors_stars import Meteor, Stars
+from settings import SPACE_SHIP_HEIGHT, SPACE_SHIP_WIDTH,WINDOW_HEIGHT, WINDOW_WIDTH,laser_sound, join
+from explosions import PlayerExplosion, AnimatedExplosion
+from support import folder_importer, image_transformer
 from laser import Laser
 
 class Player(pygame.sprite.Sprite):
@@ -31,21 +29,12 @@ class Player(pygame.sprite.Sprite):
         self.cooldown_duration = 400
 
     def laser_timer(self):
-        """
-        Manages the cooldown timer for shooting lasers.
-        """
         if not self.can_shoot:
             current_time = pygame.time.get_ticks()
             if current_time - self.laser_shoot_time >= self.cooldown_duration:
                 self.can_shoot = True
 
     def update(self, dt):
-        """
-        Updates the player's position, animation, health, energy, and shooting mechanism.
-
-        Args:
-            dt: Delta Time
-        """
         keys = pygame.key.get_pressed()
         new_direction = pygame.Vector2(int(keys[pygame.K_RIGHT]) - int(keys[pygame.K_LEFT]),
                                        int(keys[pygame.K_DOWN]) - int(keys[pygame.K_UP]))
@@ -109,13 +98,5 @@ class Player(pygame.sprite.Sprite):
         self.can_shoot = False
         self.laser_shoot_time = pygame.time.get_ticks()
 
-    def take_damage(self, amount):
-        self.reduce_health(amount)
-        if self.health.width <= 0:
-            self.die()
-
-    def die(self):
-        explosion = PlayerExplosion(self.rect.center, self.groups)
-        self.kill()  # Remove player from all groups, effectively "killing" the player
 
 
