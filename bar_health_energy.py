@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 class Bar(pygame.sprite.Sprite,ABC):
     def __init__(self, groups, initial_width, height, color, cooldown_duration, position):
-        super().__init__(groups)  # Initialize the sprite with the provided groups
+        super().__init__(groups)  
 
         self.initial_width = initial_width
         self.width = initial_width
@@ -12,12 +12,10 @@ class Bar(pygame.sprite.Sprite,ABC):
         self.cooldown_duration = cooldown_duration
         self.rect_center = position
         
-        # Initialize the bar's visual representation
         self.image = pygame.Surface((self.width, self.height))
         self.image.fill(self.color)
         self.rect = self.image.get_rect(center=self.rect_center)
 
-        # Timer mechanics for regeneration
         self.can_regenerate = True
         self.last_update_time = pygame.time.get_ticks()
 

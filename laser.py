@@ -15,8 +15,8 @@ class Laser(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
 
         # Relative offset from player position
-        self.offset_x = -6  # Adjust these values as needed
-        self.offset_y = -30  # Adjust these values as needed
+        self.offset_x = -6  
+        self.offset_y = -30  
 
         # Set the initial position of the laser
         self.rect = self.image.get_rect()
@@ -24,10 +24,7 @@ class Laser(pygame.sprite.Sprite):
 
     def update(self, dt):
         """
-        Updates the position of the laser and destroys it if it moves off-screen.
-
-        Args:
-            dt: Delta time
+         Updates the position of the laser and destroys it if it moves off-screen.
         """
         self.rect.centery -= 400 * dt
         if self.rect.bottom < 0:

@@ -1,38 +1,80 @@
 import pygame
-from settings import SPACE_SHIP_HEIGHT, SPACE_SHIP_WIDTH,WINDOW_HEIGHT, WINDOW_WIDTH,laser_sound, join
-from explosions import PlayerExplosion, AnimatedExplosion
+from settings import SPACE_SHIP_HEIGHT, SPACE_SHIP_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH, laser_sound, join
 from support import folder_importer, image_transformer
 from laser import Laser
+from abc import ABC, abstractmethod
 
-class Player(pygame.sprite.Sprite):
-    def __init__(self, sprite_groups, lasers_group, health, energy):
+
+class SpaceEntity(pygame.sprite.Sprite, ABC):
+    def __init__(self, sprite_groups, health, energy):
         super().__init__(sprite_groups)
-        self.groups = sprite_groups
-        self.lasers = lasers_group
-        self.health = health  # Health bar instance
-        self.energy = energy  # Energy bar instance
-        self.center_frame = pygame.image.load(join('data', 'images', 'space_ship', 'red', 'center.png'))
-        self.left_frames = folder_importer('data', 'images', 'space_ship', 'red', 'Left')
-        self.right_frames = folder_importer('data', 'images', 'space_ship', 'red', 'Right')
-        self.image = image_transformer(self.center_frame, SPACE_SHIP_WIDTH, SPACE_SHIP_HEIGHT)
-        self.rect = self.image.get_rect(midbottom=(WINDOW_WIDTH / 2, 700))
-        self.mask = pygame.mask.from_surface(self.image)
+        self.health = health
+        self.energy = energy
         self.direction = pygame.Vector2(0, 0)
         self.speed = 500
-        self.frame_index_left = 0
-        self.frame_index_right = 0
-        self.laser_sound = pygame.mixer.Sound(laser_sound)
 
-        # Shooting timer logic
+    @abstractmethod
+    def update(self, dt):
+        pass
+
+    def reduce_health(self, amount):
+        self.health.reduce(amount)
+
+    def increase_health(self, amount):
+        self.health.increase(amount)
+
+    def reduce_energy(self, amount):
+        self.energy.reduce(amount)
+
+    def increase_energy(self, amount):
+        self.energy.increase(amount)
+
+
+class Movable:
+    def update_position(self, rect, direction, speed, dt):
+        rect.center += direction * speed * dt
+        rect.centerx = max(rect.width / 2, min(WINDOW_WIDTH - rect.width / 2, rect.centerx))
+        rect.centery = max(rect.height / 2, min(WINDOW_HEIGHT - rect.height / 2, rect.centery))
+
+
+class Shooter:
+    def __init__(self):
         self.can_shoot = True
         self.laser_shoot_time = 0
         self.cooldown_duration = 400
+        self.laser_sound = pygame.mixer.Sound(laser_sound)
 
     def laser_timer(self):
         if not self.can_shoot:
             current_time = pygame.time.get_ticks()
             if current_time - self.laser_shoot_time >= self.cooldown_duration:
                 self.can_shoot = True
+
+    def shoot(self, groups, lasers_group, player):
+        if self.can_shoot:
+            laser = Laser(groups, player)
+            lasers_group.add(laser)
+            self.laser_sound.play()
+            self.can_shoot = False
+            self.laser_shoot_time = pygame.time.get_ticks()
+
+
+class Player(SpaceEntity, Movable, Shooter):
+    def __init__(self, sprite_groups, lasers_group, health, energy):
+        SpaceEntity.__init__(self, sprite_groups, health, energy)
+        Shooter.__init__(self)  
+        self.groups = sprite_groups
+        self.lasers = lasers_group
+
+        self.center_frame = pygame.image.load(join('data', 'images', 'space_ship', 'red', 'center.png'))
+        self.left_frames = folder_importer('data', 'images', 'space_ship', 'red', 'Left')
+        self.right_frames = folder_importer('data', 'images', 'space_ship', 'red', 'Right')
+        self.image = image_transformer(self.center_frame, SPACE_SHIP_WIDTH, SPACE_SHIP_HEIGHT)
+        self.rect = self.image.get_rect(midbottom=(WINDOW_WIDTH / 2, 700))
+        self.mask = pygame.mask.from_surface(self.image)
+
+        self.frame_index_left = 0
+        self.frame_index_right = 0
 
     def update(self, dt):
         keys = pygame.key.get_pressed()
@@ -44,6 +86,20 @@ class Player(pygame.sprite.Sprite):
             self.frame_index_left = 0
             self.frame_index_right = 0
 
+        self.update_image()
+        self.update_position(self.rect, self.direction, self.speed, dt)
+
+        if keys[pygame.K_SPACE] and self.can_shoot:
+            if self.energy.width == 0:
+                self.can_shoot = False
+            else:
+                self.shoot(self.groups, self.lasers, self)
+                self.special_move()
+
+        self.energy.increase(1)
+        self.laser_timer()
+
+    def update_image(self):
         if self.direction.x > 0:
             self.image = image_transformer(self.right_frames[self.frame_index_right], SPACE_SHIP_WIDTH,
                                            SPACE_SHIP_HEIGHT)
@@ -58,45 +114,6 @@ class Player(pygame.sprite.Sprite):
             self.frame_index_left = 0
             self.frame_index_right = 0
 
-        self.rect.center += self.direction * self.speed * dt
-        self.rect.centerx = max(self.rect.width / 2, min(WINDOW_WIDTH - self.rect.width / 2, self.rect.centerx))
-        self.rect.centery = max(self.rect.height / 2, min(WINDOW_HEIGHT - self.rect.height / 2, self.rect.centery))
-
-        if keys[pygame.K_SPACE] and self.can_shoot:
-            if self.energy.width == 0:
-                self.can_shoot = False
-            else:
-                self.shoot()
-                self.special_move()
-
-        self.energy.increase(1)  # Passing the amount to increase energy by
-        self.laser_timer()
-
-    def reduce_health(self, amount):
-        self.health.reduce(amount)  # Passing the amount to reduce health by
-
-    def increase_health(self, amount):
-        self.health.increase(amount)  # Passing the amount to increase health by
-
-    def reduce_energy(self, amount):
-        self.energy.reduce(amount)  # Passing the amount to reduce energy by
-
-    def increase_energy(self, amount):
-        self.energy.increase(amount)  # Passing the amount to increase energy by
-
     def special_move(self):
-        self.reduce_energy(10)  # Reduces energy by a specific amount
-        if self.energy.width > 50:
-            self.cooldown_duration = 0
-        else:
-            self.cooldown_duration = 400
-
-    def shoot(self):
-        laser = Laser(self.groups, self)
-        self.lasers.add(laser)
-        self.laser_sound.play()
-        self.can_shoot = False
-        self.laser_shoot_time = pygame.time.get_ticks()
-
-
-
+        self.reduce_energy(10)
+        self.cooldown_duration = 0 if self.energy.width > 50 else 400

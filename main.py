@@ -2,12 +2,14 @@ import pygame
 import random
 from os.path import join
 from settings import *
-from player import *
+from player import Player  # Ensure correct import if Player is now part of a module
 from menus import Menu
 from support import Scoreboard, HighScoresManager
-from bar_health_energy import * 
+from bar_health_energy import Health, Energy
 from meteors_stars import Meteor, Stars
 from laser import Laser
+from explosions import PlayerExplosion, AnimatedExplosion
+
 
 # Initialize the mixer for sound effects
 pygame.mixer.init()
@@ -62,7 +64,7 @@ class Game:
         self.energy = Energy(self.all_sprites)
         self.meteors = pygame.sprite.Group()
         self.lasers = pygame.sprite.Group()
-        self.player = Player(self.all_sprites, self.lasers, self.health, self.energy)
+        self.player = Player(self.all_sprites, self.lasers, self.health, self.energy)  # Ensure proper initialization
         self.score = Scoreboard(self.all_sprites)
 
         # Time tracking and spawn settings
@@ -196,7 +198,6 @@ class Game:
         self.energy = Energy(self.all_sprites)
         self.player = Player(self.all_sprites, self.lasers, self.health, self.energy)  # Ensure all parameters are passed
         self.score = Scoreboard(self.all_sprites)
-
 
     def display_high_scores(self):
         """
