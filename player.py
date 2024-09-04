@@ -96,7 +96,7 @@ class Player(SpaceEntity, Movable, Shooter):
                 self.shoot(self.groups, self.lasers, self)
                 self.special_move()
 
-        self.energy.increase(1)
+        self.energy.increase(3.5)
         self.laser_timer()
 
     def update_image(self):
@@ -115,5 +115,5 @@ class Player(SpaceEntity, Movable, Shooter):
             self.frame_index_right = 0
 
     def special_move(self):
-        self.reduce_energy(10)
+        self.reduce_energy(7)
         self.cooldown_duration = 0 if self.energy.width > 50 else 400

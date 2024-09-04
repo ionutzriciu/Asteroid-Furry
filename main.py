@@ -2,7 +2,7 @@ import pygame
 import random
 from os.path import join
 from settings import *
-from player import Player  # Ensure correct import if Player is now part of a module
+from player import Player  
 from menus import Menu
 from support import Scoreboard, HighScoresManager
 from bar_health_energy import Health, Energy
@@ -10,14 +10,23 @@ from meteors_stars import Meteor, Stars
 from laser import Laser
 from explosions import PlayerExplosion, AnimatedExplosion
 
-
-# Initialize the mixer for sound effects
 pygame.mixer.init()
 
+SPAWN_INTERVAL_STARS = 500
+MIN_SPAWN_INTERVAL = 150
+SPAWN_DECREASE_RATE = 5
+MAX_METEORS = 30
+MAX_STARS = 20
+BUTTON_WIDTH = 400
+BUTTON_HEIGHT = 50
+DEFAULT_BOX_COLOR = '#8e7cc3'
+BUTTON_TEXT_COLOR = (255, 255, 255)
+FONT_PATH = join('data', 'images', 'Oxanium-Bold.ttf')
+BG_COLOR = (0, 0, 0)
+FAQ_BG_COLOR = '#adadff'
+FONT_SIZE = 40
+
 class GameState:
-    """
-    Enumeration for game states.
-    """
     MAIN_MENU = "main_menu"
     PLAYING = "playing"
     GAME_OVER = "game_over"
@@ -25,97 +34,65 @@ class GameState:
     LEADERBOARD = "leaderboard"
 
 class Game:
-    """
-    The main game class that handles initialization, game loop, and state management.
-    """
     def __init__(self):
-        """
-        Initialize the game, setting up the display, clock, state flags, sounds, and sprites.
-        """
-        # Initialize pygame
         pygame.init()
-
-        # Set up display window
         self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pygame.display.set_caption('Asteroid Fury')
-
-        # Initialize clock
         self.clock = pygame.time.Clock()
-
-        # Game state flags
         self.running = True
         self.current_state = GameState.MAIN_MENU
 
-        # Sounds
-        self.collision_sound = pygame.mixer.Sound(explosion_sound)  # Load collision sound
+        self.collision_sound = pygame.mixer.Sound(explosion_sound)  
         pygame.mixer.music.load(main_menu_music)
-        pygame.mixer.music.play(-1)  # Loop the music
+        pygame.mixer.music.play(-1)  
 
-        # Load background image
-        self.image = pygame.image.load(join('data', 'images', 'bg', '1349322.png')).convert_alpha()
+        self.background_image = pygame.image.load(join('data', 'images', 'bg', '1349322.png')).convert_alpha()
+        self.font = pygame.font.Font(FONT_PATH, FONT_SIZE)
 
-        # Initialize menu
         self.menu = Menu(self.display_surface)
 
-        # Sprite groups
         self.all_sprites = pygame.sprite.Group()
         self.stars = pygame.sprite.Group()
-        self.health = Health(self.all_sprites)
-        self.energy = Energy(self.all_sprites)
         self.meteors = pygame.sprite.Group()
         self.lasers = pygame.sprite.Group()
-        self.player = Player(self.all_sprites, self.lasers, self.health, self.energy)  # Ensure proper initialization
+        self.health = Health(self.all_sprites)
+        self.energy = Energy(self.all_sprites)
+        self.player = Player(self.all_sprites, self.lasers, self.health, self.energy)  
         self.score = Scoreboard(self.all_sprites)
 
-        # Time tracking and spawn settings
         self.spawn_time_meteors = pygame.time.get_ticks()
         self.spawn_time_stars = pygame.time.get_ticks()
         self.initial_spawn_interval = random.randint(1000, 2000)
         self.spawn_interval_meteors = self.initial_spawn_interval
-        self.spawn_interval_stars = 500
-        self.min_spawn_interval = 150
-        self.spawn_decrease_rate = 5
+        self.spawn_interval_stars = SPAWN_INTERVAL_STARS
         self.meteors_spawned = 0
-        self.max_meteors = 30
-        self.max_stars = 20
 
-        # High scores
         self.high_scores_manager = HighScoresManager()
 
     def spawn_stars(self):
-        """
-        Spawn stars at regular intervals.
-        """
         current_time = pygame.time.get_ticks()
-        if current_time - self.spawn_time_stars >= self.spawn_interval_stars and len(self.stars) < self.max_stars:
-            for _ in range(1):
-                star = Stars(self.all_sprites)
-                self.all_sprites.add(star)
-                self.stars.add(star)
+        if current_time - self.spawn_time_stars >= self.spawn_interval_stars and len(self.stars) < MAX_STARS:
+            star = Stars(self.all_sprites)
+            self.all_sprites.add(star)
+            self.stars.add(star)
             self.spawn_time_stars = current_time
 
-            if self.meteors_spawned % self.spawn_decrease_rate == 0:
-                self.spawn_interval_stars = max(self.min_spawn_interval, self.spawn_interval_stars - 50)
+            if self.meteors_spawned % SPAWN_DECREASE_RATE == 0:
+                self.spawn_interval_stars = max(MIN_SPAWN_INTERVAL, self.spawn_interval_stars - 50)
 
     def spawn_meteors(self):
-        """
-        Spawn meteors at regular intervals.
-        """
         current_time = pygame.time.get_ticks()
-        if current_time - self.spawn_time_meteors >= self.spawn_interval_meteors and len(self.meteors) < self.max_meteors:
+        if current_time - self.spawn_time_meteors >= self.spawn_interval_meteors and len(self.meteors) < MAX_METEORS:
             meteor = Meteor(self.all_sprites, self.meteors)
             self.all_sprites.add(meteor)
             self.meteors.add(meteor)
             self.spawn_time_meteors = current_time
             self.meteors_spawned += 10
 
-            if self.meteors_spawned % self.spawn_decrease_rate == 0:
-                self.spawn_interval_meteors = max(self.min_spawn_interval, self.spawn_interval_meteors - 100)
+            if self.meteors_spawned % SPAWN_DECREASE_RATE == 0:
+                self.spawn_interval_meteors = max(MIN_SPAWN_INTERVAL, self.spawn_interval_meteors - 100)
 
-    def collisions(self):
-        """
-        Handle collisions between the player, meteors, and lasers.
-        """
+    def handle_collisions(self):
         player_collisions = pygame.sprite.spritecollide(self.player, self.meteors, False, pygame.sprite.collide_mask)
         for meteor in player_collisions:
             PlayerExplosion(self.player.rect.center, self.all_sprites)
@@ -130,27 +107,16 @@ class Game:
                 self.score.increase_score()
                 AnimatedExplosion(laser.rect.midtop, self.all_sprites)
 
-    def game_over(self):
-        """
-        Handle the game over state, prompt for the player's name, and save high scores.
-        """
-        x = WINDOW_WIDTH // 2
-        y = WINDOW_HEIGHT // 2
-        text = 'New High Score !!! Enter your name: '
-
-        button_width = 400
-        button_height = 50
-        default_box_color = ('#8e7cc3')
-        button_text_color = (255, 255, 255)
-        button_font = pygame.font.Font(join('data', 'images', 'Oxanium-Bold.ttf'), 40)
-
-        button_rect = pygame.Rect(x - button_width // 2, y - button_height // 2, button_width, button_height)
-        pygame.draw.rect(self.display_surface, default_box_color, button_rect)
-        text_surface = button_font.render(text, True, button_text_color)
-        text_rect = text_surface.get_rect(center=(x, y - 50))
+    def draw_text(self, text, position, color=BUTTON_TEXT_COLOR):
+        text_surface = self.font.render(text, True, color)
+        text_rect = text_surface.get_rect(center=position)
         self.display_surface.blit(text_surface, text_rect)
 
-        pygame.display.flip()
+    def game_over(self):
+        x = WINDOW_WIDTH // 2
+        y = WINDOW_HEIGHT // 2
+        input_box = pygame.Rect(x - BUTTON_WIDTH // 2, y - BUTTON_HEIGHT // 2, BUTTON_WIDTH, BUTTON_HEIGHT)
+
         name = ''
         while True:
             for event in pygame.event.get():
@@ -158,37 +124,30 @@ class Game:
                     self.running = False
                     return
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN:
-                        if name:  # Make sure a name has been entered
-                            self.high_scores_manager.add_high_score(name, self.score.current_score)
-                            self.display_high_scores()
-                            self.reset_game()
-                            self.current_state = GameState.MAIN_MENU  # Ensure the game stays in the menu after resetting
-                            return
+                    if event.key == pygame.K_RETURN and name:  
+                        self.high_scores_manager.add_high_score(name, self.score.current_score)
+                        self.display_high_scores()
+                        self.reset_game()
+                        self.current_state = GameState.MAIN_MENU  
+                        return
                     elif event.key == pygame.K_BACKSPACE:
                         name = name[:-1]
                     else:
                         name += event.unicode
 
-            pygame.draw.rect(self.display_surface, default_box_color, button_rect)
-            text_surface = button_font.render(text, True, button_text_color)
-            self.display_surface.blit(text_surface, text_rect)
-            name_surface = button_font.render(name, True, button_text_color)
-            name_rect = name_surface.get_rect(center=button_rect.center)
-            self.display_surface.blit(name_surface, name_rect)
+            pygame.draw.rect(self.display_surface, DEFAULT_BOX_COLOR, input_box)
+            self.draw_text('New High Score !!! Enter your name: ', (x, y - 50))
+            self.draw_text(name, input_box.center)
             pygame.display.flip()
 
     def reset_game(self):
-        """
-        Reset the game to its initial state.
-        """
         self.health.width = self.health.initial_width
         self.energy.energy_width = self.energy.initial_width
         self.score.current_score = 0
         self.spawn_time_meteors = pygame.time.get_ticks()
         self.spawn_time_stars = pygame.time.get_ticks()
         self.spawn_interval_meteors = self.initial_spawn_interval
-        self.spawn_interval_stars = 500
+        self.spawn_interval_stars = SPAWN_INTERVAL_STARS
         self.meteors_spawned = 0
         self.all_sprites.empty()
         self.stars.empty()
@@ -196,47 +155,44 @@ class Game:
         self.lasers.empty()
         self.health = Health(self.all_sprites)
         self.energy = Energy(self.all_sprites)
-        self.player = Player(self.all_sprites, self.lasers, self.health, self.energy)  # Ensure all parameters are passed
+        self.player = Player(self.all_sprites, self.lasers, self.health, self.energy)  
         self.score = Scoreboard(self.all_sprites)
 
     def display_high_scores(self):
-        """
-        Display the high scores on the screen.
-        """
         high_scores = self.high_scores_manager.get_high_scores()
-        self.display_surface.fill(('#adadff'))  # Clear screen
-        font = pygame.font.Font(join('data', 'images', 'Oxanium-Bold.ttf'), 40)
-
+        self.display_surface.fill(FAQ_BG_COLOR)
         y_offset = 100
+
         for i, score_entry in enumerate(high_scores):
-            text = f"{i + 1}. {score_entry['name']}: {score_entry['score']}"
-            text_surface = font.render(text, True, (255, 255, 240))
-            text_rect = text_surface.get_rect(center=(WINDOW_WIDTH // 2, y_offset + i * 50))
-            self.display_surface.blit(text_surface, text_rect)
+            self.draw_text(f"{i + 1}. {score_entry['name']}: {score_entry['score']}", (WINDOW_WIDTH // 2, y_offset + i * 50))
 
         pygame.display.flip()
 
-        waiting = True
-        while waiting:
+        while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
-                    waiting = False
+                    return
                 elif event.type == pygame.KEYDOWN:
-                    waiting = False  # Exit the loop to return to the main menu
+                    return
+
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+            elif event.type == pygame.KEYDOWN:
+                if self.current_state == GameState.PLAYING and event.key == pygame.K_ESCAPE:
+                    self.current_state = GameState.MAIN_MENU
+                elif self.current_state == GameState.FAQ and (event.key == pygame.K_RETURN or event.key == pygame.K_ESCAPE):
+                    self.current_state = GameState.MAIN_MENU
 
     def game_run(self):
-        """
-        Main game loop that handles different game states.
-        """
         while self.running:
+            self.handle_events()
+
             if self.current_state == GameState.MAIN_MENU:
                 self.menu.display_menu()
                 pygame.display.flip()
-
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        self.running = False
 
                 selected_option = self.menu.handle_input()
                 if selected_option == 'Play':
@@ -248,25 +204,16 @@ class Game:
                 elif selected_option == 'Leaderboard':
                     self.current_state = GameState.LEADERBOARD
 
-            elif self.current_state == GameState.PLAYING:  # Gameplay loop
-                dt = self.clock.tick(60) / 1000  # Delta time for smooth movement
-                current_time = pygame.time.get_ticks()
-
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        self.running = False
-                    elif event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_ESCAPE:
-                            self.current_state = GameState.MAIN_MENU  # Go back to main menu
-
-                self.display_surface.fill((0, 0, 0))
-                self.display_surface.blit(self.image, (0, 0))
+            elif self.current_state == GameState.PLAYING:
+                dt = self.clock.tick(60) / 1000  
+                self.display_surface.fill(BG_COLOR)
+                self.display_surface.blit(self.background_image, (0, 0))
                 self.all_sprites.draw(self.display_surface)
                 self.all_sprites.update(dt)
                 self.health.increase(5)
                 self.spawn_stars()
-                self.collisions()
                 self.spawn_meteors()
+                self.handle_collisions()
                 pygame.display.flip()
 
                 if self.health.width <= 0:
@@ -275,16 +222,11 @@ class Game:
 
             elif self.current_state == GameState.FAQ:
                 self.menu.display_faq()
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        self.running = False
-                    elif event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_RETURN or event.key == pygame.K_ESCAPE:
-                            self.current_state = GameState.MAIN_MENU
+                pygame.display.flip()
 
             elif self.current_state == GameState.LEADERBOARD:
                 self.display_high_scores()
-                self.current_state = GameState.MAIN_MENU  # Go back to the main menu after displaying
+                self.current_state = GameState.MAIN_MENU  
 
         pygame.quit()
 

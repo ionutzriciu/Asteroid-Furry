@@ -14,11 +14,9 @@ class Laser(pygame.sprite.Sprite):
         self.image = image_transformer(self.rotated_image, LASER_WIDTH, LASER_HEIGHT)
         self.mask = pygame.mask.from_surface(self.image)
 
-        # Relative offset from player position
         self.offset_x = -6  
         self.offset_y = -30  
 
-        # Set the initial position of the laser
         self.rect = self.image.get_rect()
         self.rect.midbottom = (self.player.rect.centerx + self.offset_x, self.player.rect.centery + self.offset_y)
 
