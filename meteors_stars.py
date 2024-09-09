@@ -8,7 +8,7 @@ class Meteor(pygame.sprite.Sprite):
         self.meteors = meteors
         self.groups = sprite_group
 
-        self.meteor_frames = [image_transformer(image, METEOR_HEIGHT, METEOR_WIDTH) for image in folder_importer('data', 'images', 'meteor')]
+        self.meteor_frames = [image_transformer(image, METEOR_HEIGHT, METEOR_WIDTH) for image in folder_importer('assets', 'images', 'meteor')]
 
         self.image = self.meteor_frames[0]
         self.rect = self.image.get_rect(midbottom=(randint(50, WINDOW_WIDTH - 50), 0))
@@ -41,7 +41,7 @@ class Stars(pygame.sprite.Sprite):
         super().__init__(groups)
         
         if Stars.star_image is None:
-            initial_image = pygame.image.load(join('data', 'images', 'star.png')).convert_alpha()
+            initial_image = pygame.image.load(join('assets', 'images', 'star.png')).convert_alpha()
             rotated_image = pygame.transform.rotate(initial_image, 303)
             Stars.star_image = pygame.transform.scale(rotated_image, (100, 100))
 

@@ -66,9 +66,9 @@ class Player(SpaceEntity, Movable, Shooter):
         self.groups = sprite_groups
         self.lasers = lasers_group
 
-        self.center_frame = pygame.image.load(join('data', 'images', 'space_ship', 'red', 'center.png'))
-        self.left_frames = folder_importer('data', 'images', 'space_ship', 'red', 'Left')
-        self.right_frames = folder_importer('data', 'images', 'space_ship', 'red', 'Right')
+        self.center_frame = pygame.image.load(join('assets', 'images', 'space_ship', 'red', 'center.png'))
+        self.left_frames = folder_importer('assets', 'images', 'space_ship', 'red', 'Left')
+        self.right_frames = folder_importer('assets', 'images', 'space_ship', 'red', 'Right')
         self.image = image_transformer(self.center_frame, SPACE_SHIP_WIDTH, SPACE_SHIP_HEIGHT)
         self.rect = self.image.get_rect(midbottom=(WINDOW_WIDTH / 2, 700))
         self.mask = pygame.mask.from_surface(self.image)

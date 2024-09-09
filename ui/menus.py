@@ -1,6 +1,6 @@
 import pygame
-from settings import *
-from support import *
+
+from engine import *
 
 
 class Menu:
@@ -8,8 +8,8 @@ class Menu:
         self.screen = screen
         self.options = ['Play', 'FAQ', 'Quit', 'Leaderboard']
         self.selected_option = 0
-        self.font = pygame.font.Font(join('data', 'images', 'Oxanium-Bold.ttf'), 40)
-        self.title_font = pygame.font.Font(join('data', 'images', 'Oxanium-Bold.ttf'), 100)  
+        self.font = pygame.font.Font(join('assets', 'images', 'Oxanium-Bold.ttf'), 40)
+        self.title_font = pygame.font.Font(join('assets', 'images', 'Oxanium-Bold.ttf'), 100)  
         self.title = 'ASTEROID FURY !!!'
 
     def display_menu(self):

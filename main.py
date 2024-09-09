@@ -25,7 +25,7 @@ BUTTON_WIDTH = 400
 BUTTON_HEIGHT = 50
 DEFAULT_BOX_COLOR = '#8e7cc3'
 BUTTON_TEXT_COLOR = (255, 255, 255)
-FONT_PATH = join('data', 'images', 'Oxanium-Bold.ttf')
+FONT_PATH = join('assets', 'images', 'Oxanium-Bold.ttf')
 BG_COLOR = (0, 0, 0)
 FAQ_BG_COLOR = '#adadff'
 FONT_SIZE = 40
@@ -50,7 +50,7 @@ class Game:
         pygame.mixer.music.load(main_menu_music)
         pygame.mixer.music.play(-1)  
 
-        self.background_image = pygame.image.load(join('data', 'images', 'bg', '1349322.png')).convert_alpha()
+        self.background_image = pygame.image.load(join('assets', 'images', 'bg', '1349322.png')).convert_alpha()
         self.font = pygame.font.Font(FONT_PATH, FONT_SIZE)
 
         self.menu = Menu(self.display_surface)

@@ -8,7 +8,7 @@ class Laser(pygame.sprite.Sprite):
         super().__init__(sprite_groups)
         self.groups = sprite_groups
         self.player = player
-        self.initial_image = pygame.image.load(join('data', 'images', 'laser', 'Laser.png')).convert_alpha()
+        self.initial_image = pygame.image.load(join('assets', 'images', 'laser', 'Laser.png')).convert_alpha()
         self.angle = 121
         self.rotated_image = pygame.transform.rotate(self.initial_image, self.angle)
         self.image = image_transformer(self.rotated_image, LASER_WIDTH, LASER_HEIGHT)

@@ -10,7 +10,7 @@ class AnimatedExplosion(pygame.sprite.Sprite):
         super().__init__(groups)
 
         if AnimatedExplosion.preloaded_frames is None:
-            original_frames = png_image_cutter(join('data', 'images', 'explosions', '1.png'), 196, 190)
+            original_frames = png_image_cutter(join('assets', 'images', 'explosions', '1.png'), 196, 190)
             AnimatedExplosion.preloaded_frames = [image_transformer(frame, 150, 150) for frame in original_frames]
 
         self.frames = AnimatedExplosion.preloaded_frames
