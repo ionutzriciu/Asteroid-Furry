@@ -1,4 +1,3 @@
-from settings import *
 from os.path import join, exists
 import json
 from os import walk

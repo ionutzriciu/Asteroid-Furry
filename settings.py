@@ -28,3 +28,4 @@ main_menu_music = join(BASE_PATH, 'data', 'audio', 'game_music', 'boss.ogg')
 laser_sound = join(BASE_PATH, 'data', 'audio', 'laser', 'laserfire02.ogg')
 explosion_sound = join(BASE_PATH, 'data', 'audio', 'explosion', 'explosion.wav')
 
+all_music = (main_menu_music, laser_sound, explosion_sound)

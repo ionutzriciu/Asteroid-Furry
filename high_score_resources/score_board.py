@@ -1,7 +1,7 @@
-from settings import *
 from os.path import join, exists
 import json
 from os import walk
+import pygame
 
 class Scoreboard(pygame.sprite.Sprite):
     def __init__(self, groups):

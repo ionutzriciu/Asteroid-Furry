@@ -1,15 +1,18 @@
 import pygame
 import random
 from os.path import join
+
+
 from settings import *
+from support import *
+
 from player import Player  
-from menus import Menu
-#from support import Scoreboard
-from bar_health_energy import Health, Energy
+
 from meteors_stars import Meteor, Stars
 from explosions import PlayerExplosion, AnimatedExplosion
-from high_score_resources.high_score_engine import HighScoresManager
-from high_score_resources.score_board import Scoreboard
+
+from ui import *
+from high_score_resources import HighScoresManager, Scoreboard
 
 pygame.mixer.init()
 
