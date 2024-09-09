@@ -1,6 +1,7 @@
 import pygame
-from support import *
-from settings import *
+from engine_support import METEOR_WIDTH, METEOR_HEIGHT, image_transformer, join, folder_importer,WINDOW_WIDTH, WINDOW_HEIGHT
+import random 
+from random import randint
 
 class Meteor(pygame.sprite.Sprite):
     def __init__(self, sprite_group, meteors):

@@ -1,7 +1,6 @@
 import pygame 
-from support import image_transformer
 from os.path import join
-from settings import LASER_HEIGHT, LASER_WIDTH
+from engine_support import LASER_HEIGHT, LASER_WIDTH, image_transformer
 
 class Laser(pygame.sprite.Sprite):
     def __init__(self, sprite_groups, player):

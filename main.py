@@ -1,9 +1,10 @@
+# THe engine_support is codependedd and can cause issues 
+
 import pygame
 import random
 from os.path import join
 
-from settings import *
-from support import *
+from engine_support import explosion_sound, main_menu_music
 
 from player import Player  
 
@@ -45,9 +46,9 @@ class Game:
         self.running = True
         self.current_state = GameState.MAIN_MENU
 
-        self.collision_sound = pygame.mixer.Sound(explosion_sound)  
-        pygame.mixer.music.load(main_menu_music)
-        pygame.mixer.music.play(-1)  
+       # self.collision_sound = pygame.mixer.Sound(explosion_sound)  
+        # pygame.mixer.music.load(main_menu_music)
+        # pygame.mixer.music.play(-1)  
 
         self.background_image = pygame.image.load(join('assets', 'images', 'bg', '1349322.png')).convert_alpha()
         self.font = pygame.font.Font(FONT_PATH, FONT_SIZE)
@@ -99,13 +100,13 @@ class Game:
         player_collisions = pygame.sprite.spritecollide(self.player, self.meteors, False, pygame.sprite.collide_mask)
         for meteor in player_collisions:
             PlayerExplosion(self.player.rect.center, self.all_sprites)
-            self.collision_sound.play()
+            #self.collision_sound.play()
             self.health.reduce(10)
 
         for laser in self.lasers:
             laser_collision = pygame.sprite.spritecollide(laser, self.meteors, True, pygame.sprite.collide_mask)
             for meteor in laser_collision:
-                self.collision_sound.play()
+                #self.collision_sound.play()
                 laser.kill()
                 self.score.increase_score()
                 AnimatedExplosion(laser.rect.midtop, self.all_sprites)

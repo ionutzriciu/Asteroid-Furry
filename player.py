@@ -1,6 +1,5 @@
 import pygame
-from settings import SPACE_SHIP_HEIGHT, SPACE_SHIP_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH, laser_sound, join
-from support import folder_importer, image_transformer
+from engine_support import SPACE_SHIP_HEIGHT, SPACE_SHIP_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH, laser_sound, join, folder_importer, image_transformer
 from laser import Laser
 from abc import ABC, abstractmethod
 
@@ -42,7 +41,7 @@ class Shooter:
         self.can_shoot = True
         self.laser_shoot_time = 0
         self.cooldown_duration = 400
-        self.laser_sound = pygame.mixer.Sound(laser_sound)
+        #self.laser_sound = pygame.mixer.Sound(laser_sound)
 
     def laser_timer(self):
         if not self.can_shoot:
@@ -54,7 +53,7 @@ class Shooter:
         if self.can_shoot:
             laser = Laser(groups, player)
             lasers_group.add(laser)
-            self.laser_sound.play()
+            #self.laser_sound.play()
             self.can_shoot = False
             self.laser_shoot_time = pygame.time.get_ticks()
 

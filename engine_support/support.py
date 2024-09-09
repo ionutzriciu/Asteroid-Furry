@@ -4,15 +4,14 @@ from os import walk
 from settings import *
 
 
-def folder_importer(*path):
+def folder_importer(base_path, *path):
     surfs = []
-    for folder_path, _, file_names in walk(join(*path)):
+    for folder_path, _, file_names in walk(join(base_path, *path)):
         for file_name in file_names:
             full_path = join(folder_path, file_name)
             image = pygame.image.load(full_path)
             surfs.append(image)
     return surfs
-
 
 def image_transformer(image, width, height):
     scaled_image = pygame.transform.smoothscale(image, (width, height))
@@ -22,7 +21,6 @@ def image_transformer(image, width, height):
         scaled_image = scaled_image.convert_alpha()
 
     return scaled_image
-
 
 def png_image_cutter(sprite_sheet_path, frame_width, frame_height):
     sprite_sheet = pygame.image.load(sprite_sheet_path).convert_alpha()
@@ -39,7 +37,6 @@ def png_image_cutter(sprite_sheet_path, frame_width, frame_height):
             frames.append(frame)
 
     return frames
-
 
 
 

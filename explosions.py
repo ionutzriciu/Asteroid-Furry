@@ -1,5 +1,5 @@
 import pygame
-from support import *
+from engine_support import png_image_cutter, join, image_transformer
 
 
 
