@@ -2,7 +2,6 @@ import pygame
 import random
 from os.path import join
 
-
 from settings import *
 from support import *
 
