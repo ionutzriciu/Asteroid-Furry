@@ -1,8 +1,6 @@
 import pygame
 from engine_support import png_image_cutter, join, image_transformer
 
-
-
 class AnimatedExplosion(pygame.sprite.Sprite):
     preloaded_frames = None
 

@@ -1,16 +1,8 @@
-# THe engine_support is codependedd and can cause issues 
-
 import pygame
 import random
 from os.path import join
-
 from engine_support import sound_main_music, sound_explosion
-
-from player import Player  
-
-from meteors_stars import Meteor, Stars
-from explosions import PlayerExplosion, AnimatedExplosion
-
+from game_elements import Meteor, Stars, PlayerExplosion, AnimatedExplosion, Player
 from ui import *
 from high_score_resources import HighScoresManager, Scoreboard
 

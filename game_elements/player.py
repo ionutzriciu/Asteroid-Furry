@@ -1,6 +1,6 @@
 import pygame
 from engine_support import SPACE_SHIP_HEIGHT, SPACE_SHIP_WIDTH, WINDOW_HEIGHT, WINDOW_WIDTH, laser_sound, join, folder_importer, image_transformer
-from laser import Laser
+from game_elements import Laser
 from abc import ABC, abstractmethod
 
 

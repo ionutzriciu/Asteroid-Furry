@@ -2,7 +2,6 @@ import pygame
 from os.path import join, exists
 from os import walk
 
-
 def folder_importer(base_path, *path):
     surfs = []
     for folder_path, _, file_names in walk(join(base_path, *path)):
