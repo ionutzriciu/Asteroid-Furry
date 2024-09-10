@@ -24,7 +24,7 @@ SPACE_SHIP_HEIGHT, SPACE_SHIP_WIDTH = 135, 135
 LASER_HEIGHT, LASER_WIDTH = 200, 200
 METEOR_HEIGHT, METEOR_WIDTH = 100, 100
 
-main_menu_music = join(BASE_PATH, 'assets', 'audio', 'game_music', 'boss.ogg')
-laser_sound = join(BASE_PATH, 'assets', 'audio', 'laser', 'laserfire02.ogg')
-explosion_sound = join(BASE_PATH, 'assets', 'audio', 'explosion', 'explosion.wav')
+sound_main_music = r"C:\Users\riciionu\Desktop\Python related\Portofolio\GitHub Uploads\Asteroid_Furry\assets\audio\game_music\looping_music.ogg"
+laser_sound = r"C:\Users\riciionu\Desktop\Python related\Portofolio\GitHub Uploads\Asteroid_Furry\assets\audio\laser\laserfire02.ogg"
+sound_explosion = r"C:\Users\riciionu\Desktop\Python related\Portofolio\GitHub Uploads\Asteroid_Furry\assets\audio\explosions.flac"
 

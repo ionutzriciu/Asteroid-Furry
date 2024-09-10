@@ -41,7 +41,9 @@ class Shooter:
         self.can_shoot = True
         self.laser_shoot_time = 0
         self.cooldown_duration = 400
-        #self.laser_sound = pygame.mixer.Sound(laser_sound)
+        self.laser_sound = pygame.mixer.Sound(laser_sound)
+        self.laser_sound.set_volume(0.2)
+
 
     def laser_timer(self):
         if not self.can_shoot:
@@ -53,7 +55,7 @@ class Shooter:
         if self.can_shoot:
             laser = Laser(groups, player)
             lasers_group.add(laser)
-            #self.laser_sound.play()
+            self.laser_sound.play()
             self.can_shoot = False
             self.laser_shoot_time = pygame.time.get_ticks()
 

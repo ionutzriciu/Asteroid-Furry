@@ -1,7 +1,6 @@
 import pygame
 from os.path import join, exists
 from os import walk
-from settings import *
 
 
 def folder_importer(base_path, *path):
