@@ -53,11 +53,12 @@ class Menu:
         pygame.display.flip()  
 
     def handle_input(self):
-        keys = pygame.key.get_just_pressed()
-        if keys[pygame.K_UP]:
-            self.selected_option = (self.selected_option - 1) % len(self.options)
-        elif keys[pygame.K_DOWN]:
-            self.selected_option = (self.selected_option + 1) % len(self.options)
-        elif keys[pygame.K_RETURN]:
-            return self.options[self.selected_option]
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    self.selected_option = (self.selected_option - 1) % len(self.options)
+                elif event.key == pygame.K_DOWN:
+                    self.selected_option = (self.selected_option + 1) % len(self.options)
+                elif event.key == pygame.K_RETURN:
+                    return self.options[self.selected_option]
         return None
