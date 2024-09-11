@@ -1,6 +1,6 @@
 import pygame
-
-from engine_support import *
+from os.path import join
+from engine_support import WINDOW_WIDTH, WINDOW_HEIGHT
 
 
 class Menu:

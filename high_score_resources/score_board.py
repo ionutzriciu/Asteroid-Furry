@@ -1,6 +1,4 @@
-from os.path import join, exists
-import json
-from os import walk
+from os.path import join
 import pygame
 
 class Scoreboard(pygame.sprite.Sprite):

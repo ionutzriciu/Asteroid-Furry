@@ -1,6 +1,5 @@
-from os.path import join, exists
+from os.path import exists
 import json
-from os import walk
 
 class HighScoresManager:
     def __init__(self, filename='high_score_resources/high_scores.json'):

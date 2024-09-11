@@ -1,10 +1,11 @@
 import pygame
 import random
 from os.path import join
-from engine_support import sound_main_music, sound_explosion
 from game_elements import Meteor, Stars, PlayerExplosion, AnimatedExplosion, Player
+from engine_support import sound_main_music, sound_explosion
 from ui import *
 from high_score_resources import HighScoresManager, Scoreboard
+
 
 pygame.mixer.init()
 
