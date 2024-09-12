@@ -8,7 +8,7 @@ class GameState:
     GAME_OVER = "game_over"
     FAQ = "faq"
     LEADERBOARD = "leaderboard"
-
+    
 
 class Menu:
     def __init__(self, screen):
@@ -21,6 +21,7 @@ class Menu:
 
     def display_menu(self):
         self.screen.fill(('#adadff')) 
+
         title_text = self.title_font.render(self.title, True, '#1d4971')  
         title_rect = title_text.get_rect(center=(WINDOW_WIDTH / 2, 200))  
         self.screen.blit(title_text, title_rect)
@@ -41,6 +42,8 @@ class Menu:
             "Energy and health autoregenerate.",
             "The ship moves faster sideways :)",
             "See if you can get to the top of the leaderboard",
+            "Special thanks to MillionthVector, pngall, JadisGames, NenadSimic, Jan125,",
+            "K.L.Jonasson for audio and graphics",
             "Code by Riciu Ionut",
             "Good luck and have fun!"
         ]
@@ -54,5 +57,18 @@ class Menu:
             text_surface = faq_font.render(line, True, (255, 255, 255))  
             self.screen.blit(text_surface, (100, y_offset + i * (text_surface.get_height() + line_spacing)))
 
-        pygame.display.flip()
+        pygame.display.flip()  
+
+    def handle_input(self):
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    self.selected_option = (self.selected_option - 1) % len(self.options)
+                elif event.key == pygame.K_DOWN:
+                    self.selected_option = (self.selected_option + 1) % len(self.options)
+                elif event.key == pygame.K_RETURN:
+                    return self.options[self.selected_option]
+        return None
+    
+    
 

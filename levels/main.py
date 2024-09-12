@@ -179,7 +179,7 @@ class Game:
 
     def game_run(self):
         while self.running:
-            Game.handle_events(self)
+            self.handle_events()
 
             if self.current_state == GameState.MAIN_MENU:
                 self.menu.display_menu()
