@@ -23,13 +23,6 @@ BG_COLOR = (0, 0, 0)
 FAQ_BG_COLOR = '#adadff'
 FONT_SIZE = 40
 
-class GameState:
-    MAIN_MENU = "main_menu"
-    PLAYING = "playing"
-    GAME_OVER = "game_over"
-    FAQ = "faq"
-    LEADERBOARD = "leaderboard"
-
 class Game:
     def __init__(self):
         pygame.init()
@@ -186,7 +179,7 @@ class Game:
 
     def game_run(self):
         while self.running:
-            self.handle_events()
+            Game.handle_events(self)
 
             if self.current_state == GameState.MAIN_MENU:
                 self.menu.display_menu()
